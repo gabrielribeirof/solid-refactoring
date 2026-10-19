@@ -1,11 +1,46 @@
 class OrderItem {
   constructor(product, quantity) {
-    this.product = product;
-    this.quantity = quantity;
+    if (!product) {
+      throw new Error("Item sem produto.");
+    }
+
+    if (quantity <= 0) {
+      throw new Error("Quantidade invalida.");
+    }
+
+    this.#product = product;
+    this.#quantity = quantity;
   }
 
+  #product;
+  #quantity;
+
   getSubtotal() {
-    return this.product.price * this.quantity;
+    return this.#product.getPrice() * this.#quantity;
+  }
+
+  getProductId() {
+    return this.#product.getId();
+  }
+
+  getProductName() {
+    return this.#product.getName();
+  }
+
+  getProductWeight() {
+    return this.#product.getWeight();
+  }
+
+  getQuantity() {
+    return this.#quantity;
+  }
+
+  changeQuantity(quantity) {
+    if (quantity <= 0) {
+      throw new Error("Quantidade invalida.");
+    }
+
+    this.#quantity = quantity;
   }
 }
 

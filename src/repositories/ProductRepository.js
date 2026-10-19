@@ -11,22 +11,23 @@ class ProductRepository {
   }
 
   findById(id) {
-    return this.products.find((product) => product.id === id);
+    return this.products.find((product) => product.getId() === id);
   }
 
-  updateStock(productId, quantity) {
-    const product = this.findById(productId);
+  save(product) {
+    const index = this.products.findIndex((storedProduct) => storedProduct.getId() === product.getId());
 
-    if (!product) {
-      throw new Error("Produto nao encontrado.");
+    if (index === -1) {
+      this.products.push(product);
+    } else {
+      this.products[index] = product;
     }
 
-    product.stock -= quantity;
     return product;
   }
 
-  list() {
-    return this.products;
+  findAll() {
+    return [...this.products];
   }
 }
 
