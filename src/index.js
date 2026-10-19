@@ -4,6 +4,13 @@ const Order = require("./domain/Order");
 const OrderItem = require("./domain/OrderItem");
 const OrderService = require("./services/OrderService");
 const ProductRepository = require("./repositories/ProductRepository");
+const OrderRepository = require("./repositories/OrderRepository");
+const PaymentProcessor = require("./services/PaymentProcessor/PaymentProcessor");
+const OrderSummaryService = require("./services/OrderSummaryService");
+const InventoryService = require("./services/InventoryService");
+const NotificationService = require("./infrastructure/NotificationService");
+const ConsoleOrderReporter = require("./infrastructure/ConsoleOrderReporter");
+const Logger = require("./utils/Logger");
 
 const productRepository = new ProductRepository();
 
@@ -28,7 +35,15 @@ const order = new Order(
   3
 );
 
-const service = new OrderService();
+const service = new OrderService({
+  inventoryService: new InventoryService(productRepository),
+  orderRepository: new OrderRepository(),
+  paymentProcessor: new PaymentProcessor(),
+  orderSummaryService: new OrderSummaryService(),
+  notificationService: new NotificationService(),
+  logger: new Logger(),
+  reporter: new ConsoleOrderReporter()
+});
 const result = service.process(order);
 
 console.log(JSON.stringify(result, null, 2));

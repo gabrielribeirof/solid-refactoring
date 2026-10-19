@@ -3,13 +3,13 @@ class OrderRepository {
     this.orders = [];
   }
 
-  save(orderSummary) {
-    this.orders.push(orderSummary);
-    return orderSummary;
+  save(order) {
+    this.orders.push(order);
+    return order;
   }
 
   findAll() {
-    return this.orders;
+    return [...this.orders];
   }
 }
 
