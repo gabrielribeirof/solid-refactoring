@@ -1,68 +1,98 @@
 # Diagrama de Classes Atual
 
-O diagrama abaixo representa a arquitetura refatorada. `repositories` e `infrastructure` pertencem à mesma camada de infraestrutura; o domínio concentra entidades, estados e pricing; e `OrderService` coordena os serviços especializados.
+O diagrama abaixo representa a arquitetura refatorada. `repositories` e `infrastructure` pertencem à mesma camada de infraestrutura; o domínio concentra entidades, estados e pricing; e `OrderService` coordena os serviços especializados. Os atributos com `-` são campos privados das entidades. Os contratos das dependências são implícitos, seguindo o duck typing do JavaScript.
 
 ```mermaid
 classDiagram
     namespace Dominio {
         class Address {
-            +street
-            +number
-            +city
-            +state
-            +zipCode
-            +region
+            -street
+            -number
+            -city
+            -state
+            -zipCode
+            -region
             +getRegion()
             +getLocation()
+            +getCity()
+            +getState()
         }
 
         class Customer {
-            +id
-            +name
-            +email
-            +phone
-            +type
-            +address
+            -id
+            -name
+            -email
+            -phone
+            -type
+            -address
+            +getId()
             +getName()
             +getEmail()
             +getType()
+            +changeType(type)
+            +getRegion()
+            +getLocation()
+            +getCity()
+            +getState()
         }
 
         class Product {
-            +id
-            +name
-            +category
-            +price
-            +weight
-            +stock
+            -id
+            -name
+            -category
+            -price
+            -weight
+            -stock
+            +getId()
+            +getName()
+            +getPrice()
+            +getWeight()
+            +getStock()
             +hasStock(quantity)
             +decreaseStock(quantity)
         }
 
         class OrderItem {
-            +product
-            +quantity
+            -product
+            -quantity
             +getSubtotal()
             +getProductId()
             +getProductName()
             +getProductWeight()
+            +getQuantity()
+            +changeQuantity(quantity)
         }
 
         class Order {
-            +id
-            +customer
-            +items
-            +couponCode
-            +paymentMethod
-            +installments
-            +status
-            +pricing
+            -id
+            -customer
+            -items
+            -couponCode
+            -paymentMethod
+            -installments
+            -status
+            -createdAt
+            -pricing
             +addItem(item)
+            +getItems()
+            +changeItemQuantity(index, quantity)
+            +getId()
+            +getCustomer()
+            +getPaymentMethod()
+            +getInstallments()
+            +hasCoupon(couponCode)
+            +applyCoupon(couponCode)
+            +getStatus()
+            +isConfirmed()
+            +getCreatedAt()
+            +getPricing()
+            +getTotalItems()
             +pay(payment)
             +confirm()
             +awaitPayment()
             +getSubtotal()
             +getTotalWeight()
+            +validate()
         }
 
         class OrderPricing {
@@ -72,7 +102,7 @@ classDiagram
             +paymentFee
             +total
             +payment
-            +from(order, payment)
+            +from(order, payment)$
         }
 
         class OrderStatus {
@@ -121,6 +151,12 @@ classDiagram
         }
     }
 
+    namespace Entrada {
+        class Index {
+            <<composition root>>
+        }
+    }
+
     namespace Infraestrutura {
         class ProductRepository {
             +products
@@ -156,7 +192,15 @@ classDiagram
     OrderItem --> Product : referencia
     Order *-- OrderPricing : produz
     Order --> OrderStatus : usa
-    OrderPricing --> PaymentStatus : recebe
+
+    Index ..> ProductRepository : cria
+    Index ..> OrderRepository : cria
+    Index ..> OrderService : monta
+    Index ..> InventoryService : injeta
+    Index ..> PaymentProcessor : injeta
+    Index ..> NotificationService : injeta
+    Index ..> ConsoleOrderReporter : injeta
+    Index ..> Logger : injeta
 
     OrderService ..> PaymentProcessor : solicita pagamento
     OrderService ..> InventoryService : reserva estoque

@@ -1,6 +1,6 @@
 # Diagrama de Classes Original
 
-Este diagrama representa a estrutura antes da refatoração. O `OrderService` concentrava validação, cálculo de preços, pagamento, estoque, persistência, notificação e saída em console.
+Este diagrama representa a estrutura antes da refatoração. O `OrderService` concentrava validação, cálculo de preços, pagamento, estoque, persistência, notificação e saída em console. Os atributos são mostrados como públicos porque o modelo original não possuía encapsulamento efetivo.
 
 ```mermaid
 classDiagram
